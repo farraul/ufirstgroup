@@ -1,8 +1,9 @@
 import logo from './logo.svg';
 import './App.css';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import Home from './pages/home';
-import Logs from './pages/logs';
+import Home from './pages/Home';
+import Logs from './pages/Logs';
+import './styles/styles.scss'
 
 
 function App() {
