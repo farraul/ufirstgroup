@@ -5,8 +5,6 @@ Chart.register(...registerables);
 
 const ChartDraw = ({options, width, height}) => {
 
-    console.log("options",options)
-
     let myChart;
     const canvasRef = useRef(null);
 

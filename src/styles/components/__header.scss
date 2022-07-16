@@ -1,0 +1,17 @@
+.header-menu{
+    background-color: #2F384B;
+    color: #DF0073;
+    height: 5em;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    padding: 1em;
+    box-sizing: border-box;
+
+    &__links{
+        width: 5em;
+        border: 1px solid #DF0073;
+        color: #DF0073;
+        background-color:  #2F384B;
+    }
+}

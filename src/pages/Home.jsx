@@ -1,101 +1,148 @@
 import { useEffect, useState } from "react";
-import Header from "../components/generic/Header";
-import ChartDraw from "../components/generic/ChartDraw";
+import Header from "../components/Header";
+import ChartDraw from "../components/ChartDraw";
 import loadData from "../components/loadData";
 
 const Home = () => {
 
     const [methods, setMethods] = useState(null);
     const [requestPerMinutes, setRequestPerMinutes] = useState(null);
+    const [codes, setCodes] = useState(null);
+    const [sizes, setSizes] = useState(null);
+
+
     let executeUseEffect = 0;
 
-    useEffect( () => {
-
-        console.log( 'Execute useEffect' );
+    useEffect(() => {
 
         let data = loadData();
 
-        data.then( (logs) => {
+        data.then((logs) => {
 
             // console.log( logs );
-            
+
             const dataCharts = {
                 requestPerMinutes: {},
                 methods: {},
                 codes: {},
-                sizes: []
+                sizes: {}
             };
 
-            logs.forEach( (log) => {
+            logs.forEach((log) => {
 
-                if ( dataCharts.methods[ log.request.method ] ) {
-                    dataCharts.methods[ log.request.method ]++;
+
+                if (dataCharts.codes[log.response_code]) {
+                    dataCharts.codes[log.response_code]++;
                 } else {
-                    if ( /GET|HEAD|POST|PUT|DELETE|PATCH/.test( log.request.method ) ) {
-                        dataCharts.methods[ log.request.method ] = 1;
+                    if (/200|404|302/.test(log.response_code)) {
+                        dataCharts.codes[log.response_code] = 1;
                     }
                 }
 
-                let datetime = Object.values( log.datetime );
+                if (dataCharts.sizes[log.document_size]) {
+                    dataCharts.sizes[log.document_size]++;
+                } else {
+                    if (/^([2-9][0-9][0-9]|1000)$/.test(log.document_size)) {
+                        dataCharts.sizes[log.document_size] = 1;
+                    }
+                }
+
+                if (dataCharts.methods[log.request.method]) {
+                    dataCharts.methods[log.request.method]++;
+                } else {
+                    if (/GET|HEAD|POST|PUT|DELETE|PATCH/.test(log.request.method)) {
+                        dataCharts.methods[log.request.method] = 1;
+                    }
+                }
+
+                let datetime = Object.values(log.datetime);
                 datetime.pop();
-                datetime = datetime.join( ':' );
+                datetime = datetime.join(':');
 
-                if ( dataCharts.requestPerMinutes[ log.request.method ] ) {
-                    if ( dataCharts.requestPerMinutes[ log.request.method ][ datetime ] ) {
-                        dataCharts.requestPerMinutes[ log.request.method ][ datetime ]++;
+                if (dataCharts.requestPerMinutes[log.request.method]) {
+                    if (dataCharts.requestPerMinutes[log.request.method][datetime]) {
+                        dataCharts.requestPerMinutes[log.request.method][datetime]++;
                     } else {
-                        dataCharts.requestPerMinutes[ log.request.method ][ datetime ] = 1;
+                        dataCharts.requestPerMinutes[log.request.method][datetime] = 1;
                     }
                 } else {
-                    if ( /GET|HEAD|POST|PUT|DELETE|PATCH/.test( log.request.method ) ) {
-                        dataCharts.requestPerMinutes[ log.request.method ] = {}
-                        dataCharts.requestPerMinutes[ log.request.method ][ datetime ] = 1
+                    if (/GET|HEAD|POST|PUT|DELETE|PATCH/.test(log.request.method)) {
+                        dataCharts.requestPerMinutes[log.request.method] = {}
+                        dataCharts.requestPerMinutes[log.request.method][datetime] = 1
                     }
 
                 }
-                
+
             });
 
             return dataCharts;
             // setDataLogs(logs)
-        }).then( (dataCharts) => {
+        }).then((dataCharts) => {
 
-            if ( executeUseEffect === 0 ) {
+            if (executeUseEffect === 0) {
                 executeUseEffect = 1;
 
-                let arrGet = Object.values( dataCharts.requestPerMinutes.GET ),
-                arrHead = Object.values( dataCharts.requestPerMinutes.HEAD ),
-                arrPost = Object.values( dataCharts.requestPerMinutes.POST );
+                let arrGet = Object.values(dataCharts.requestPerMinutes.GET),
+                    arrHead = Object.values(dataCharts.requestPerMinutes.HEAD),
+                    arrPost = Object.values(dataCharts.requestPerMinutes.POST);
 
                 let countValuesGet = arrGet.length;
                 let countValuesHead = arrHead.length;
                 let countValuesPost = arrPost.length;
 
-                let getMinutes = arrGet.reduce( ( prev, current) => {
+                let getMinutes = arrGet.reduce((prev, current) => {
                     return prev + current;
                 }, 0);
 
-                let headMinutes = arrHead.reduce( ( prev, current) => {
+                let headMinutes = arrHead.reduce((prev, current) => {
                     return prev + current;
                 }, 0);
 
-                let postMinutes = arrPost.reduce( ( prev, current) => {
+                let postMinutes = arrPost.reduce((prev, current) => {
                     return prev + current;
                 }, 0);
 
                 let promedio = {
-                    GET: Math.round( getMinutes / countValuesGet ),
-                    HEAD: Math.round( headMinutes / countValuesHead ),
-                    POST: Math.round( postMinutes / countValuesPost ),
+                    GET: Math.round(getMinutes / countValuesGet),
+                    HEAD: Math.round(headMinutes / countValuesHead),
+                    POST: Math.round(postMinutes / countValuesPost),
                 }
+
+
+                let codes = {
+                    type: 'doughnut',
+                    data: {
+                        labels: Object.keys(dataCharts.codes),
+                        datasets: [{
+                            label: '',
+                            data: Object.values(dataCharts.codes),
+                            backgroundColor: [
+                                'rgb(255, 99, 132)',
+                                'rgb(54, 162, 235)',
+                                'rgb(255, 205, 86)'
+                            ],
+                            hoverOffset: 4
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                };
+
+
+
 
                 let methods = {
                     type: 'bar',
                     data: {
-                        labels: Object.keys( dataCharts.methods ),
+                        labels: Object.keys(dataCharts.methods),
                         datasets: [{
-                            label: '# de peticiones',
-                            data: Object.values( dataCharts.methods ),
+                            label: 'Nº requests',
+                            data: Object.values(dataCharts.methods),
                             backgroundColor: [
                                 'rgba(255, 99, 132, 0.2)',
                                 'rgba(54, 162, 235, 0.2)',
@@ -121,10 +168,10 @@ const Home = () => {
                 let requestPerMinutes = {
                     type: 'bar',
                     data: {
-                        labels: Object.keys( promedio ),
+                        labels: Object.keys(promedio),
                         datasets: [{
-                            label: '# de peticiones',
-                            data: Object.values( promedio ),
+                            label: 'Avarage requests per minute',
+                            data: Object.values(promedio),
                             backgroundColor: [
                                 'rgba(255, 99, 132, 0.2)',
                                 'rgba(54, 162, 235, 0.2)',
@@ -147,22 +194,62 @@ const Home = () => {
                     }
                 };
 
-                setMethods( methods );
-                setRequestPerMinutes( requestPerMinutes );
 
+                let sizes = {
+                    type: 'doughnut',
+                    data: {
+                        labels: Object.keys(dataCharts.sizes),
+                        datasets: [{
+                            label: 'olkkk',
+                            data: Object.values(dataCharts.sizes),
+                            backgroundColor: [
+                                'rgb(255, 99, 132)',
+                                'rgb(54, 162, 235)',
+                                'rgb(255, 205, 86)'
+                            ],
+                            hoverOffset: 4
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                };
+
+                setMethods(methods);
+                setRequestPerMinutes(requestPerMinutes);
+                setCodes(codes)
+                setSizes(sizes)
             }
 
-        } );
+        });
     }, []);
 
-    
 
     return (
         <>
             <Header />
-            <div className="home" style={{width: '700px'}}>
-                {methods ? <ChartDraw options={methods} width="400" height="300" /> : 'Cargando...'}
-                {requestPerMinutes ? <ChartDraw options={requestPerMinutes} width="400" height="300" /> : 'Cargando...'}
+            <div className="home">
+                <div className="home__section-echarts">
+                    <div className="home__echart-top">
+                        <h2>Response Code Chart</h2>
+                        {codes ? <ChartDraw options={codes} height="300" /> : 'Cargando...'}
+                    </div>
+                    <div className="home__echart-top">
+                        <h2>Codes</h2>
+                        {methods ? <ChartDraw options={methods} height="300" /> : 'Cargando...'}
+                    </div>
+                    <div className="home__echart-top">
+                        <h2>Requests per minute chart</h2>
+                        {requestPerMinutes ? <ChartDraw options={requestPerMinutes} height="300" /> : 'Cargando...'}
+                    </div>
+                </div>
+                <h2>Document Size Chart</h2>
+                {sizes ? <ChartDraw options={sizes} width="100%" height="700" /> : 'Cargando...'}
+
             </div>
         </>
     )

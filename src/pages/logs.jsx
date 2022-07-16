@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import Header from "../components/generic/Header";
+import Header from "../components/Header";
 import loadData from "../components/loadData";
 
 const Logs = () => {
 
-    const [dataLogs, setDataLogs] = useState([])
+    const [dataLogs, setDataLogs] = useState(null)
 
     useEffect( () => {
         let data = loadData();

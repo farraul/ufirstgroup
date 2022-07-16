@@ -1,0 +1,19 @@
+.home{
+    width: 100%;
+
+
+    &__section-echarts{
+        display: flex;
+        flex-direction: row;
+    }
+    
+    &__echart-top{
+        display: flex;
+        flex-direction: row;
+        width: 33.3%;
+        flex-direction: column;
+    }
+
+
+
+}
