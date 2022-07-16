@@ -19,8 +19,6 @@ const Home = () => {
 
         data.then((logs) => {
 
-            // console.log( logs );
-
             const dataCharts = {
                 requestPerMinutes: {},
                 methods: {},
@@ -29,7 +27,6 @@ const Home = () => {
             };
 
             logs.forEach((log) => {
-
 
                 if (dataCharts.codes[log.response_code]) {
                     dataCharts.codes[log.response_code]++;
@@ -76,7 +73,7 @@ const Home = () => {
             });
 
             return dataCharts;
-            // setDataLogs(logs)
+
         }).then((dataCharts) => {
 
             if (executeUseEffect === 0) {
@@ -132,9 +129,6 @@ const Home = () => {
                         }
                     }
                 };
-
-
-
 
                 let methods = {
                     type: 'bar',
@@ -236,24 +230,22 @@ const Home = () => {
                 <div className="home__section-echarts">
                     <div className="home__echart-top">
                         <h2>Response Code Chart</h2>
-                        {codes ? <ChartDraw options={codes} height="300" /> : 'Cargando...'}
+                        {codes ? <ChartDraw options={codes} height="300" /> : 'Loading...'}
                     </div>
                     <div className="home__echart-top">
                         <h2>Codes</h2>
-                        {methods ? <ChartDraw options={methods} height="300" /> : 'Cargando...'}
+                        {methods ? <ChartDraw options={methods} height="300" /> : 'Loading...'}
                     </div>
                     <div className="home__echart-top">
                         <h2>Requests per minute chart</h2>
-                        {requestPerMinutes ? <ChartDraw options={requestPerMinutes} height="300" /> : 'Cargando...'}
+                        {requestPerMinutes ? <ChartDraw options={requestPerMinutes} height="300" /> : 'Loading...'}
                     </div>
                 </div>
                 <h2>Document Size Chart</h2>
-                {sizes ? <ChartDraw options={sizes} width="100%" height="700" /> : 'Cargando...'}
-
+                {sizes ? <ChartDraw options={sizes} width="100%" height="700" /> : 'Loading...'}
             </div>
         </>
     )
-
 }
 
 export default Home;
