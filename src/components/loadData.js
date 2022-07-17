@@ -1,6 +1,6 @@
 import { getLogs } from "../requests/requests";
 
-const loadData = async () => {
+const LoadData = async () => {
 
         let res = await getLogs()
 
@@ -32,7 +32,6 @@ const loadData = async () => {
         })
 
         return data;
-        
 }
 
-export default loadData;
+export default LoadData;

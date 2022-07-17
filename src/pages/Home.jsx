@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import Header from "../components/Header";
 import ChartDraw from "../components/ChartDraw";
-import loadData from "../components/loadData";
+import LoadData from "../components/LoadData";
 
 const Home = () => {
 
@@ -15,7 +15,7 @@ const Home = () => {
 
     useEffect(() => {
 
-        let data = loadData();
+        let data = LoadData();
 
         data.then((logs) => {
 
@@ -237,12 +237,12 @@ const Home = () => {
                         {methods ? <ChartDraw options={methods} height="300" /> : 'Loading...'}
                     </div>
                     <div className="home__echart-top">
-                        <h2>Requests per minute chart</h2>
+                        <h2>Average requests per minute chart</h2>
                         {requestPerMinutes ? <ChartDraw options={requestPerMinutes} height="300" /> : 'Loading...'}
                     </div>
                 </div>
                 <h2>Document Size Chart</h2>
-                {sizes ? <ChartDraw options={sizes} width="100%" height="700" /> : 'Loading...'}
+                {sizes ? <ChartDraw options={sizes} /> : 'Loading...'}
             </div>
         </>
     )

@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 import Header from "../components/Header";
-import loadData from "../components/loadData";
+import LoadData from "../components/LoadData";
 
 const Logs = () => {
 
     const [dataLogs, setDataLogs] = useState(null)
 
     useEffect( () => {
-        let data = loadData();
+        let data = LoadData();
         data.then( (logs) => {
             setDataLogs(logs)
         });
